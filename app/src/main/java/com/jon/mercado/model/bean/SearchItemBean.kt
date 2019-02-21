@@ -1,4 +1,3 @@
 package com.jon.mercado.model.bean
 
-class SearchItemBean {
-}
+data class SearchItemBean(val title: String)
