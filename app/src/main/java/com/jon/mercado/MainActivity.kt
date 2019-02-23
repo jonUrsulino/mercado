@@ -56,7 +56,9 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "Call SearchItemsBean: ${response.body()}")
                     val searchItemsBean = response.body()
 
+
                     val searchItem = searchItemsBean?.results?.get(0)
+                    Log.d(TAG, "Dados do searchItem: $searchItem")
                     Snackbar.make(it, "Resultado 1: ${searchItem?.title}", Snackbar.LENGTH_LONG)
                         .setAction("Ver valor") {
 
