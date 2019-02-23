@@ -1,12 +1,14 @@
 package com.jon.mercado
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.jon.mercado.model.IServiceSearch
+import com.jon.mercado.model.IServicesAPI
+import com.jon.mercado.model.bean.ItemBean
 import com.jon.mercado.model.bean.SearchItemsBean
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,6 +20,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val search = retrofit.create(IServiceSearch::class.java)
+        val search = retrofit.create(IServicesAPI::class.java)
 
         button.setOnClickListener {
             val text = editText.text.toString()
@@ -47,14 +53,38 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onResponse(call: Call<SearchItemsBean>, response: Response<SearchItemsBean>) {
+                    Log.d(TAG, "Call SearchItemsBean: ${response.body()}")
                     val searchItemsBean = response.body()
 
-                    Snackbar.make(it, "Resultado 1: ${searchItemsBean?.results?.get(0)?.title}", Snackbar.LENGTH_LONG)
-                        .setAction("Ok", null).show()
+                    val searchItem = searchItemsBean?.results?.get(0)
+                    Snackbar.make(it, "Resultado 1: ${searchItem?.title}", Snackbar.LENGTH_LONG)
+                        .setAction("Ver valor") {
+
+                            if (searchItem != null) {
+                                val callItem = search.getItem(searchItem.id)
+
+                                callItem.enqueue(object : Callback<ItemBean> {
+                                    override fun onFailure(call: Call<ItemBean>, t: Throwable) {
+                                        Snackbar.make(it, "Erro pra ver valor ${t.message}", Snackbar.LENGTH_LONG)
+                                            .setAction("Ok", null).show()
+                                    }
+
+                                    override fun onResponse(call: Call<ItemBean>, response: Response<ItemBean>) {
+                                        Log.d(TAG, "Call ItemBean: ${response.body()}")
+                                        showToast(response.body())
+                                    }
+                                })
+                            }
+
+                        }.show()
                 }
             })
         }
 
+    }
+
+    private fun showToast(item: ItemBean?) {
+        Toast.makeText(this@MainActivity, "${item?.title}: USS${item?.price}", Toast.LENGTH_SHORT ).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
