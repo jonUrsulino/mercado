@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             startActivity(SearchActivity.createIntent(this@MainActivity, editText.text.toString()))
         }
-
+/*
         button.setOnClickListener {
             val text = editText.text.toString()
             val callSearchItems = search.getSearchItems(text)
@@ -85,12 +85,8 @@ class MainActivity : AppCompatActivity() {
                         }.show()
                 }
             })
-        }
+        }*/
 
-    }
-
-    private fun showToast(item: ItemBean?) {
-        Toast.makeText(this@MainActivity, "${item?.title}: USS${item?.price}", Toast.LENGTH_SHORT ).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
