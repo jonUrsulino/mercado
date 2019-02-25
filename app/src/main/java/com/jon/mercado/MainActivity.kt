@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity() {
         val search = retrofit.create(IServicesAPI::class.java)
 
         button.setOnClickListener {
+            startActivity(SearchActivity.createIntent(this@MainActivity, editText.text.toString()))
+        }
+
+        button.setOnClickListener {
             val text = editText.text.toString()
             val callSearchItems = search.getSearchItems(text)
 
